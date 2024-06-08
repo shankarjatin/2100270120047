@@ -2,7 +2,7 @@
 const apiService = require('../services/apiService');
 
 exports.fetchProductsByCategory = async (companyname, categoryname, accessToken) => {
-    console.log(accessToken);
+
     return await apiService.fetchProductsByCategory(companyname, categoryname, accessToken);
 };
 

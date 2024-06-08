@@ -2,28 +2,29 @@
 const productModel = require('../models/productModel');
 const { paginate } = require('../utils/pagination');
 const { sortProducts } = require('../utils/sorting');
+const apiService = require('../services/apiService');
 const { COMPANIES, CATEGORIES } = require('../config');
 
 exports.getTopProducts = async (req, res) => {
     const { companyname, categoryname } = req.params;
-    const { top = 10, page = 1, sort_by, order = 'asc', minPrice = 0, maxPrice = Infinity } = req.query;
-    const accessToken = req.headers.authorization.split(' ')[1]; // Extract access token from Authorization header
+    const { top = 10, minPrice = 0, maxPrice = Infinity } = req.query;
+    const accessToken = req.headers.authorization.split(' ')[1];
 
     if (!COMPANIES.includes(companyname) || !CATEGORIES.includes(categoryname)) {
         return res.status(400).json({ error: 'Invalid company name or category name' });
     }
 
-    if (top > 10) {
-        return res.status(400).json({ error: 'Page size cannot exceed 10' });
-    }
-
     try {
-        const products = await productModel.fetchProductsByCategory(companyname, categoryname, accessToken);
-        const filteredProducts = products.filter(product => product.price >= minPrice && product.price <= maxPrice);
-        const sortedProducts = sortProducts(filteredProducts, sort_by, order);
-        const paginatedProducts = paginate(sortedProducts, page, top);
+        // Fetch products from the external test server
+        let products = await apiService.fetchProductsByCategory(companyname, categoryname, top, minPrice, maxPrice, accessToken);
 
-        res.json(paginatedProducts);
+        // Filter products based on price range
+        products = products.filter(product => product.price >= minPrice && product.price <= maxPrice);
+
+        // Take only the top 'n' products
+        products = products.slice(0, top);
+
+        res.json(products);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
