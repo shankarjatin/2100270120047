@@ -1,13 +1,11 @@
 // models/productModel.js
-const axios = require('axios');
-const { BASE_API_URL } = require('../config');
+const apiService = require('../services/apiService');
 
-exports.fetchProductsByCategory = async (companyname, categoryname) => {
-    const response = await axios.get(`${BASE_API_URL}/companies/${companyname}/categories/${categoryname}/products`);
-    return response.data;
+exports.fetchProductsByCategory = async (companyname, categoryname, accessToken) => {
+    console.log(accessToken);
+    return await apiService.fetchProductsByCategory(companyname, categoryname, accessToken);
 };
 
-exports.fetchProductById = async (companyname, categoryname, productid) => {
-    const response = await axios.get(`${BASE_API_URL}/companies/${companyname}/categories/${categoryname}/products/${productid}`);
-    return response.data;
+exports.fetchProductById = async (companyname, categoryname, productid, accessToken) => {
+    return await apiService.fetchProductById(companyname, categoryname, productid, accessToken);
 };

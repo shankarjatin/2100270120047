@@ -1,10 +1,10 @@
 // app.js
 const express = require('express');
 const app = express();
-// const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 app.use(express.json());
-// app.use('/categories', productRoutes);
+app.use('/companies', productRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
